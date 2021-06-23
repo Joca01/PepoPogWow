@@ -34,7 +34,9 @@ public class Factory {
     }
 
     public void startSimulation(){
-        
+        //need to start the zones
+        //put an order for each model
+        //add the vehicles to the respective first zone i guess
     }
 
    public ArrayList<HashMap<String,Float>> getAverageWaitingTimeVehicle(){
