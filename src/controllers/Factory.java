@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Factory {
     private final Map vehicles;
     private final Map zones;
+    private final AtomicBoolean simulationNotOver;
     private final Map<String, Map<String, ArrayList<Item>>> defaultModels;
+
     public Factory() {
+        simulationNotOver = new AtomicBoolean(true);
         zones = new HashMap<Integer, Zone>();
         defaultModels = new HashMap<String, Map<String, ArrayList<Item>>>();
         vehicles = new HashMap<String, Vehicle>();
@@ -25,10 +29,21 @@ public class Factory {
     }
 
     public void createVehicle(String modelName){
+        //Creates Vehicle obj based on passed Model , sets its current zone to his first zone on the list
+        //and adds it to the said Zone's Q
         Map<String,ArrayList<Item>> model = defaultModels.get(modelName);
         ItemTimePeriod orderTime = (ItemTimePeriod) model.get("TimeToOrder").get(0);
         ArrayList<Item> zones = model.get("Zones");
+
+        Zone firstZone = (Zone)zones.get(0).getFirstField();
+
         Vehicle vehicle = new Vehicle(zones,orderTime);
+        try {
+            firstZone.addToQueue(vehicle);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        vehicle.setZone(firstZone);
         vehicles.put(modelName,vehicle);
 
     }
@@ -36,13 +51,16 @@ public class Factory {
     public void startSimulation(){
         //need to start the zones
         //put an order for each model
-        //add the vehicles to the respective first zone i guess
     }
 
    public ArrayList<HashMap<String,Float>> getAverageWaitingTimeVehicle(){
 
    }
 
+
+   public void endSimulation(){
+        simulationNotOver.set(false);
+   }
 
     public void addNewModel(String name, ArrayList<Item> zones,ItemTimePeriod orderTime){
 
@@ -58,6 +76,12 @@ public class Factory {
         addZone(3, 4);
         addZone(4, 3);
         addZone(5, 1);
+    }
+
+
+    private void changeLinesAtZone(int zoneNumber,int lines){
+        Zone zone = (Zone) this.zones.get(zoneNumber);
+        zone.setLines(lines);
     }
 
     private void populateDefaultModels(){

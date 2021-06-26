@@ -2,7 +2,6 @@ package models;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class Vehicle {
     //Should take information from user input and filter it and populate the atributes
@@ -45,15 +44,19 @@ public class Vehicle {
     public boolean isVehicleComplete(){
         //Verifies if the Vehicle passed through all zones
         //TODO chek if there is a better way to do this check or if this one can bugg out if the car is at the zone but hasn't yet complete its time
-        if (pastedThroughZones.size() == zones.keySet().size()){
+        if (pastedThroughZones.size() == zones.size()){
             return true;
         }
         return false;
     }
 
-    public ItemZoneTime getZoneAndTimeAt(int position){
+    public Float getZoneAndTimeAt(Zone zone){
         //Returns the Zone and average time from the given postion as an ItemZoneTime , where we can then extract each one;
-        return zones.get(position);
+        for (Item item : zones){
+           if (item.getFirstField() == zone){
+               return (Float) item.getSecondField();
+           }
+        }
     }
 
     @Override
