@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Cli{
     public void Cli(){
-        start();
+        //start();
     }
 
     public void start() throws InterruptedException {
@@ -65,7 +65,7 @@ public class Cli{
                 }
                 factory.endSimulation();
                 System.out.println("Resultados: ");
-                factory.showResults();
+                //factory.showResults();
                 break;
             case "":
                 looping = false;
