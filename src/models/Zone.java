@@ -27,7 +27,6 @@ public class Zone {
     }
 
     public Vehicle popFromQueue(){
-        //TODO check if its correct to have intiallized as null
         Vehicle vehicle = null;
         try {
             vehicle = queue.take();
@@ -39,5 +38,4 @@ public class Zone {
 
 
 
-    //TODO fazer as linhas
 }

@@ -13,7 +13,7 @@ public class Cli{
         start();
     }
 
-    public void start(){
+    public void start() throws InterruptedException {
         Factory factory = new Factory();
         Scanner scanner = new Scanner(System.in);
         String line;
@@ -57,7 +57,15 @@ public class Cli{
             case "Start":
                 System.out.println("Simulação iniciada...");
                 //Começar simulação
+                factory.startSimulation();
+                try {
+                    Thread.sleep(27*1000);
+                }catch (InterruptedException e){
+                    e.printStackTrace();
+                }
+                factory.endSimulation();
                 System.out.println("Resultados: ");
+                factory.showResults();
                 break;
             case "":
                 looping = false;
