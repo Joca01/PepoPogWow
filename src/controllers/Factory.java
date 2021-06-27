@@ -3,6 +3,9 @@ package controllers;
 import models.*;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Factory {
@@ -10,6 +13,7 @@ public class Factory {
     private final Map zones;
     private final AtomicBoolean simulationNotOver;
     private final Map<String, Map<String, ArrayList<Item>>> defaultModels;
+    private ExecutorService orderPool;
 
     public Factory() {
         simulationNotOver = new AtomicBoolean(true);
@@ -21,7 +25,7 @@ public class Factory {
     }
 
     public void addZone(int ID, int lines) {
-        Zone zone = new Zone(ID, lines);
+        Zone zone = new Zone(ID, lines, this.simulationNotOver);
         zones.put(ID, zone);
     }
 
@@ -88,6 +92,24 @@ public class Factory {
     public void startSimulation(){
         //need to start the zones
         //put an order for each model
+        Collection<Zone> zones = this.zones.values();
+        for(Zone zone : zones){
+            zone.startWorkingLines();
+        }
+
+        orderPool = Executors.newCachedThreadPool();
+        for(String key : this.defaultModels.keySet()){
+            orderPool.submit(new Order(key, this));
+        }
+
+        try {
+            TimeUnit.SECONDS.sleep(27);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        endSimulation();
+
     }
 
 
@@ -149,5 +171,9 @@ public class Factory {
 
     public void updateZone(int zoneID, int lines) {
         getZone(zoneID).setLines(lines);
+    }
+
+    public Map<String, Map<String, ArrayList<Item>>> getDefaultModels() {
+        return this.defaultModels;
     }
 }
