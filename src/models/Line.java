@@ -68,6 +68,10 @@ public class Line implements Runnable{
         endBreak = System.currentTimeMillis();
     }
 
+    public ItemTimeInformation getTimeInformation(){
+        return new ItemTimeInformation(timeAlive,totalBreak);
+    }
+
     private void takeBreak() {
         this.startBreak = System.currentTimeMillis();
     }
