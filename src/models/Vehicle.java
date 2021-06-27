@@ -12,9 +12,13 @@ public class Vehicle {
     private List<Zone> pastedThroughZones;
     private long initialized;
     private long finished;
+    private long startPause;
+    private long finishPause;
+    private long totalPause;
 
     public Vehicle(ArrayList<Item> zones , ItemTimePeriod timePeriod ){
         this.initialized = System.currentTimeMillis();
+        this.totalPause =0;
        this.zones = zones;
        this.timePeriod = timePeriod;
        this.currentZone = null;
@@ -22,6 +26,14 @@ public class Vehicle {
     }
 
     //TODO method to mesure in Q time
+
+    public long getTimeToFinish(){
+       return finished-initialized;
+    }
+
+    public void updateTotalPause(){
+        totalPause += finishPause-startPause;
+    }
 
     public void isFinished(){
         //To be called by the last Zone from zones Array , after required time has passed
@@ -35,6 +47,14 @@ public class Vehicle {
            pastedThroughZones.add(currentZone);
         }
         currentZone = zone;
+    }
+
+    public void stopPause(){
+        finishPause = System.currentTimeMillis();
+    }
+
+    public void takePause(){
+        startPause = System.currentTimeMillis();
     }
 
     public Zone whereAmI(){
@@ -69,4 +89,7 @@ public class Vehicle {
                 '}';
     }
 
+    public long getWaitingTime() {
+        return totalPause;
+    }
 }

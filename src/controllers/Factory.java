@@ -2,10 +2,7 @@ package controllers;
 
 import models.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Factory {
@@ -18,7 +15,7 @@ public class Factory {
         simulationNotOver = new AtomicBoolean(true);
         zones = new HashMap<Integer, Zone>();
         defaultModels = new HashMap<String, Map<String, ArrayList<Item>>>();
-        vehicles = new HashMap<String, Vehicle>();
+        vehicles = new HashMap<String, ArrayList<Vehicle>>();
         populateDefaultZones();
         populateDefaultModels();
     }
@@ -44,8 +41,48 @@ public class Factory {
             e.printStackTrace();
         }
         vehicle.setZone(firstZone);
-        vehicles.put(modelName,vehicle);
 
+        if (!vehicles.containsKey(modelName)){ //checking if the model key already has an array of vehicles
+            ArrayList<Vehicle> array = new ArrayList<Vehicle>();
+            vehicles.put(modelName,array);
+        }
+        ArrayList<Vehicle> modelArray = (ArrayList<Vehicle>) vehicles.get(modelName);
+        modelArray.add(vehicle);
+
+    }
+
+    public ArrayList<ItemModelAverage> getModelsAverageWaitingTime(){
+        ArrayList<ItemModelAverage> returnArray = new ArrayList<ItemModelAverage>();
+        for(String model : defaultModels.keySet()) {
+            long time = 0;
+            int amount = 0;
+            for (Vehicle vehicle : (ArrayList<Vehicle>) vehicles.get(model)) {
+                time += vehicle.getWaitingTime();
+                amount ++;
+            }
+            float average = time/amount;
+            returnArray.add(new ItemModelAverage(model,average));
+        }
+        return  returnArray;
+    }
+
+    public ArrayList<ItemModelAverage> getModelsAverageBuildingTime(){
+       ArrayList<ItemModelAverage> returnArray = new ArrayList<ItemModelAverage>();
+       for(String model : defaultModels.keySet()) {
+           long time = 0;
+           int amount = 0;
+           for (Vehicle vehicle : (ArrayList<Vehicle>) vehicles.get(model)) {
+               time += vehicle.getTimeToFinish();
+               amount ++;
+           }
+           float average = time/amount;
+          returnArray.add(new ItemModelAverage(model,average));
+       }
+       return  returnArray;
+    }
+
+    public int getModelCount(){
+        return defaultModels.keySet().size();
     }
 
     public void startSimulation(){
@@ -108,5 +145,13 @@ public class Factory {
             defaultModels.put("M1", infoM1);
             defaultModels.put("M2", infoM2);
             defaultModels.put("M3", infoM3);
+    }
+
+    public Zone getZone(Integer zoneID) {
+        return (Zone) zones.get(zoneID);
+    }
+
+    public void updateZone(int zoneID, int lines) {
+        getZone(zoneID).setLines(lines);
     }
 }

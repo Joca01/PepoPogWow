@@ -27,6 +27,8 @@ public class Line implements Runnable{
            } catch (InterruptedException e) {
                e.printStackTrace();
            }
+           model.takePause();
+
        }
     }
 }
