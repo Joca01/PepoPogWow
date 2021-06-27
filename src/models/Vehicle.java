@@ -25,8 +25,6 @@ public class Vehicle {
        this.pastedThroughZones = new ArrayList<Zone>();
     }
 
-    //TODO method to mesure in Q time
-
     public long getTimeToFinish(){
        return finished-initialized;
     }
@@ -71,12 +69,14 @@ public class Vehicle {
     }
 
     public Float getZoneAndTimeAt(Zone zone){
-        //Returns the Zone and average time from the given postion as an ItemZoneTime , where we can then extract each one;
+        //Returns the Zone and average time from the given position as an ItemZoneTime , where we can then extract each one;
+        Float toReturn = null;
         for (Item item : zones){
            if (item.getFirstField() == zone){
-               return (Float) item.getSecondField();
+               toReturn = (Float) item.getSecondField();
            }
         }
+        return toReturn;
     }
 
     @Override
@@ -87,6 +87,14 @@ public class Vehicle {
                 ", currentZone=" + currentZone +
                 ", pastedThroughZones=" + pastedThroughZones +
                 '}';
+    }
+
+   public Zone getNextZone(){
+       return (Zone) zones.get(pastedThroughZones.size() + 1).getFirstField();
+   }
+
+    public void stampZone(){
+        this.pastedThroughZones.add(this.currentZone);
     }
 
     public long getWaitingTime() {

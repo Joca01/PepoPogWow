@@ -32,7 +32,7 @@ public class Factory {
         ItemTimePeriod orderTime = (ItemTimePeriod) model.get("TimeToOrder").get(0);
         ArrayList<Item> zones = model.get("Zones");
 
-        Zone firstZone = (Zone)zones.get(0).getFirstField();
+        Zone firstZone = (Zone) zones.get(0).getFirstField();
 
         Vehicle vehicle = new Vehicle(zones,orderTime);
         try {
@@ -89,10 +89,6 @@ public class Factory {
         //need to start the zones
         //put an order for each model
     }
-
-   public ArrayList<HashMap<String,Float>> getAverageWaitingTimeVehicle(){
-
-   }
 
 
    public void endSimulation(){
