@@ -24,6 +24,7 @@ public class Factory {
         populateDefaultModels();
     }
 
+
     public void addZone(int ID , int lines) {
         Zone zone = new Zone(ID, lines, this.simulationNotOver);
         zones.put(ID, zone);
@@ -149,11 +150,11 @@ public class Factory {
     }
 
     private void populateDefaultZones(){
-        addZone(1, 3);
-        addZone(2, 2);
-        addZone(3, 4);
-        addZone(4, 3);
-        addZone(5, 1);
+        addZone(1,3);
+        addZone(2,2);
+        addZone(3,4);
+        addZone(4,3);
+        addZone(5,1);
     }
 
 

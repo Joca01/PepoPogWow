@@ -1,12 +1,11 @@
-import views.Cli;
-import views.GUI;
 
+import views.Cli;
 public class Program {
     public static void main(String[] args) {
-        /*Cli cli = new Cli();
+        Cli cli = new Cli();
         cli.start();
-*/
-        GUI gui = new GUI();
-        gui.main(args);
+
+        //GUI gui = new GUI();
+        //gui.main(args);
     }
 }
