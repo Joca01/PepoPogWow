@@ -13,7 +13,7 @@ public class Factory {
     private HashMap<Integer,Zone> zones;
     private final AtomicBoolean simulationNotOver;
     private final Map<String, Map<String, ArrayList<Item>>> defaultModels;
-    private ExecutorService orderPool;
+    private ExecutorService orderPool = Executors.newCachedThreadPool();
 
     public Factory() {
         simulationNotOver = new AtomicBoolean(true);
@@ -33,7 +33,7 @@ public class Factory {
         zones.put(ID, zone);
     }
 
-    public void createVehicle(String modelName){
+    public synchronized void createVehicle(String modelName){
         Map<String,ArrayList<Item>> model = defaultModels.get(modelName);
         ItemTimePeriod orderTime = (ItemTimePeriod) model.get("TimetoOrder").get(0);
 
@@ -49,14 +49,8 @@ public class Factory {
         }
             vehicles.get(modelName).add(vehicle);
 
-
         vehicle.setZone(firstZone);
-
-        try {
-            firstZone.addToQueue(vehicle);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        firstZone.addToQueue(vehicle);
 
     }
 
@@ -115,10 +109,9 @@ public class Factory {
             zone.startWorkingLines();
         }
 
-        orderPool = Executors.newFixedThreadPool(defaultModels.keySet().size());
+        //orderPool = Executors.newFixedThreadPool(defaultModels.keySet().size());
         for(String key : this.defaultModels.keySet()){
             orderPool.submit(new Order(key, this, simulationNotOver));
-
         }
 
         try{

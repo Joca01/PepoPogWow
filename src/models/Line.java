@@ -24,33 +24,32 @@ public class Line implements Runnable{
        this.startingTime = System.currentTimeMillis();
        takeBreak();
        while (simulationNotOver.get()){
-           this.model = zone.popFromQueue();
-           model.stopPause();
-           model.updateTotalPause();
+           if(!zone.queueEmpty()){
+               this.model = zone.popFromQueue();
 
-           Float timeOnZone = model.getZoneAndTimeAt(zone);
-           try {
-               stopBreak();
-               updateTotalBreak();
-               Thread.sleep(erlang.getValue(timeOnZone));
-           } catch (InterruptedException e) {
-               e.printStackTrace();
-           }
+               model.stopPause();
+               model.updateTotalPause();
 
-           model.stampZone();
-           if (model.isVehicleComplete()){
-               model.isFinished();
-           }else{
-               model.takePause();
-               Zone newZone = model.getNextZone();
-               model.setZone(newZone);
+               Float timeOnZone = model.getZoneAndTimeAt(zone);
                try {
-                   newZone.addToQueue(model);
+                   stopBreak();
+                   updateTotalBreak();
+                   Thread.sleep(erlang.getValue(timeOnZone));
                } catch (InterruptedException e) {
                    e.printStackTrace();
                }
+               model.stampZone();
+               if (model.isVehicleComplete()){
+                   model.isFinished();
+               }else{
+                   model.takePause();
+                   Zone newZone = model.getNextZone();
+                   model.setZone(newZone);
+                   newZone.addToQueue(model);
+               }
+               takeBreak();
            }
-            takeBreak();
+           System.out.println("trabalhando");
        }
        this.endingTime = System.currentTimeMillis();
        updateTimeAlive();
