@@ -32,6 +32,7 @@ public class Factory {
     public void createVehicle(String modelName){
         Map<String,ArrayList<Item>> model = defaultModels.get(modelName);
         ItemTimePeriod orderTime = (ItemTimePeriod) model.get("TimetoOrder").get(0);
+
         ArrayList<Item> zones = model.get("Zones");
 
         Zone firstZone = (Zone) zones.get(0).getFirstField();
@@ -67,51 +68,53 @@ public class Factory {
 
     }
 
-    public ArrayList<ItemModelAverage> getModelsAverageWaitingTime(){
+    public ArrayList<ItemModelAverage> getModelsAverageWaitingTime() {
         ArrayList<ItemModelAverage> returnArray = new ArrayList<ItemModelAverage>();
-        for(String model : defaultModels.keySet()) {
+        for (String model : defaultModels.keySet()) {
             long time = 0;
             int amount = 0;
             for (Vehicle vehicle : (ArrayList<Vehicle>) vehicles.get(model)) {
                 time += vehicle.getWaitingTime();
-                amount ++;
+                amount++;
             }
             double average = time/amount;
             returnArray.add(new ItemModelAverage(model,average));
+
         }
-        return  returnArray;
+        return returnArray;
     }
 
-    public ArrayList<ItemModelAverage> getModelsAverageBuildingTime(){
-       ArrayList<ItemModelAverage> returnArray = new ArrayList<ItemModelAverage>();
-       for(String model : defaultModels.keySet()) {
-           long time = 0;
-           int amount = 0;
-           for (Vehicle vehicle : (ArrayList<Vehicle>) vehicles.get(model)) {
-               time += vehicle.getTimeToFinish();
-               amount ++;
-           }
-           float average = time/amount;
-          returnArray.add(new ItemModelAverage(model,average));
-       }
-       return  returnArray;
+    public ArrayList<ItemModelAverage> getModelsAverageBuildingTime() {
+        ArrayList<ItemModelAverage> returnArray = new ArrayList<ItemModelAverage>();
+        for (String model : defaultModels.keySet()) {
+            long time = 0;
+            int amount = 0;
+            for (Vehicle vehicle : (ArrayList<Vehicle>) vehicles.get(model)) {
+                time += vehicle.getTimeToFinish();
+                amount++;
+            }
+            float average = time / amount;
+            returnArray.add(new ItemModelAverage(model, average));
+        }
+        return returnArray;
     }
 
-    public int getModelCount(){
+    public int getModelCount() {
         return defaultModels.keySet().size();
     }
 
-    public void startSimulation(){
+    public void startSimulation() {
         //need to start the zones
         //put an order for each model
         Collection<Zone> zones = this.zones.values();
-        for(Zone zone : zones){
+        for (Zone zone : zones) {
             zone.startWorkingLines();
         }
 
         orderPool = Executors.newFixedThreadPool(defaultModels.keySet().size());
         for(String key : this.defaultModels.keySet()){
             orderPool.submit(new Order(key, this, simulationNotOver));
+
         }
 
         try{
@@ -139,13 +142,13 @@ public class Factory {
 
     public void addNewModel(String name, ArrayList<Item> zones,ItemTimePeriod orderTime){
 
-        Map<String,ArrayList<Item>> infoModel = new HashMap<String,ArrayList<Item>>();
-        infoModel.put("TimetoOrder",new ArrayList<Item>(List.of(orderTime)));
-        infoModel.put("Zones",zones);
+        Map<String, ArrayList<Item>> infoModel = new HashMap<String, ArrayList<Item>>();
+        infoModel.put("TimetoOrder", new ArrayList<Item>(List.of(orderTime)));
+        infoModel.put("Zones", zones);
         defaultModels.put(name, infoModel);
-
     }
-    private void populateDefaultZones() {
+
+    private void populateDefaultZones(){
         addZone(1, 3);
         addZone(2, 2);
         addZone(3, 4);
@@ -155,20 +158,20 @@ public class Factory {
 
 
 
-    private void populateDefaultModels(){
+    private void populateDefaultModels() {
         //Create Info Maps
-        Map<String,ArrayList<Item>> infoM1 = new HashMap<String,ArrayList<Item>>();
-        Map<String,ArrayList<Item>> infoM2 = new HashMap<String,ArrayList<Item>>();
-        Map<String,ArrayList<Item>> infoM3 = new HashMap<String,ArrayList<Item>>();
+        Map<String, ArrayList<Item>> infoM1 = new HashMap<String, ArrayList<Item>>();
+        Map<String, ArrayList<Item>> infoM2 = new HashMap<String, ArrayList<Item>>();
+        Map<String, ArrayList<Item>> infoM3 = new HashMap<String, ArrayList<Item>>();
         //Add info to Models
-        infoM1.put("TimetoOrder",new ArrayList<Item>(List.of(new ItemTimePeriod(3,7))));
-        infoM1.put("Zones",new ArrayList<Item>(List.of(new ItemZoneTime((Zone) zones.get(4), 1.10f),
-                new ItemZoneTime((Zone) zones.get(1),0.80f), new ItemZoneTime((Zone) zones.get(3), 0.75f))));
+        infoM1.put("TimetoOrder", new ArrayList<Item>(List.of(new ItemTimePeriod(3, 7))));
+        infoM1.put("Zones", new ArrayList<Item>(List.of(new ItemZoneTime((Zone) zones.get(4), 1.10f),
+                new ItemZoneTime((Zone) zones.get(1), 0.80f), new ItemZoneTime((Zone) zones.get(3), 0.75f))));
 
-        infoM2.put("TimetoOrder",new ArrayList<Item>(List.of(new ItemTimePeriod(4,6))));
-        infoM2.put("Zones",new ArrayList<Item>(List.of(new ItemZoneTime((Zone) zones.get(3), 0.50f),
-                    new ItemZoneTime((Zone) zones.get(1),0.60f), new ItemZoneTime((Zone) zones.get(2), 0.85f),
-                    new ItemZoneTime((Zone) zones.get(5), 0.50f))));
+        infoM2.put("TimetoOrder", new ArrayList<Item>(List.of(new ItemTimePeriod(4, 6))));
+        infoM2.put("Zones", new ArrayList<Item>(List.of(new ItemZoneTime((Zone) zones.get(3), 0.50f),
+                new ItemZoneTime((Zone) zones.get(1), 0.60f), new ItemZoneTime((Zone) zones.get(2), 0.85f),
+                new ItemZoneTime((Zone) zones.get(5), 0.50f))));
 
         infoM3.put("TimetoOrder",new ArrayList<Item>(List.of(new ItemTimePeriod(2,5))));
         infoM3.put("Zones",new ArrayList<Item>(List.of(new ItemZoneTime((Zone) zones.get(2), 1.20f),
@@ -176,9 +179,9 @@ public class Factory {
                     new ItemZoneTime((Zone) zones.get(4), 0.90f), new ItemZoneTime((Zone) zones.get(3),1.0f))));
 
 
-            defaultModels.put("M1", infoM1);
-            defaultModels.put("M2", infoM2);
-            defaultModels.put("M3", infoM3);
+        defaultModels.put("M1", infoM1);
+        defaultModels.put("M2", infoM2);
+        defaultModels.put("M3", infoM3);
     }
 
     public Zone getZone(Integer zoneID) {

@@ -10,7 +10,7 @@ import java.util.Scanner;
 
 public class Cli{
     public void Cli(){
-        start();
+        //start();
     }
 
     public void start() {
@@ -59,10 +59,11 @@ public class Cli{
                 //Começar simulação
                 factory.startSimulation();
                 System.out.println("Resultados: ");
+
                 ArrayList<ItemModelAverage> modelAverage = factory.getModelsAverageBuildingTime();
                 ArrayList<ItemModelAverage> modelWait = factory.getModelsAverageWaitingTime();
                 HashMap<String, HashMap<String,Double>> linePercentage = factory.getLinesPercentageWork();
-                //TODO line %
+
                 for (int i = 0 ; i<modelAverage.size();i++){
                     System.out.println(modelAverage.get(i).getFirstField() + " demorou em média " + modelAverage.get(i).getSecondField() + " horas.");
                 }
