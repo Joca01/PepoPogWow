@@ -2,6 +2,8 @@ package models;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,7 +13,7 @@ public class Zone {
     private int ID;
     private int lineAmount;
     //Maybe this is inside the Line
-    private LinkedBlockingQueue<Vehicle> queue;
+    private LinkedList<Vehicle> queue;
     private ExecutorService lines;
     private AtomicBoolean simulationNotOver;
     private HashMap<String,Float> linePercentages;
@@ -20,14 +22,14 @@ public class Zone {
     public Zone(int ID, int lines, AtomicBoolean simulationNotOver) {
         this.ID = ID;
         this.lineAmount = lines;
-        this.queue = new LinkedBlockingQueue<Vehicle>();
+        this.queue = new LinkedList<>();
         this.lines = Executors.newFixedThreadPool(lines);
         this.simulationNotOver = simulationNotOver;
         this.linesList = new ArrayList<Line>();
         populateLines();
     }
 
-    private int getLineNumber(){
+    public int getLineNumber(){
         return this.lineAmount;
     }
 
@@ -44,12 +46,7 @@ public class Zone {
         }
     }
 
-    public synchronized void addToQueue(Vehicle vehicle) throws InterruptedException {
-        try {
-            queue.put(vehicle);
-        }catch (InterruptedException e){
-            e.printStackTrace();
-        }
+public synchronized void addToQueue(Vehicle vehicle) { queue.add(vehicle);
     }
 
     public void setLines(int amount){
@@ -59,11 +56,9 @@ public class Zone {
 
     public synchronized Vehicle popFromQueue(){
         Vehicle vehicle = null;
-        try {
-            vehicle = queue.take();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
+        vehicle = queue.remove();
+
        return vehicle;
     }
 
@@ -79,6 +74,10 @@ public class Zone {
 
     public String getID() {
         return "Z"+this.ID;
+    }
+
+    public boolean queueEmpty() {
+        return this.queue.isEmpty();
     }
 }
 

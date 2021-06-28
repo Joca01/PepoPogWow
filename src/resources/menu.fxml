@@ -8,7 +8,7 @@
 <AnchorPane prefHeight="275.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.GUI">
    <children>
       <Accordion layoutX="8.0" layoutY="90.0" />
-      <Button layoutX="10.0" layoutY="218.0" mnemonicParsing="false" onAction="#terminalDebugger" prefHeight="47.0" prefWidth="401.0" text="Simular" />
+      <Button layoutX="10.0" layoutY="218.0" mnemonicParsing="false" onAction="#simulate" prefHeight="47.0" prefWidth="401.0" text="Simular" />
       <TextField fx:id="newNumberOfLinesInZone" layoutX="212.0" layoutY="159.0" prefHeight="25.0" prefWidth="198.0" promptText="Novo número de linhas" />
       <TextField fx:id="zoneId" layoutX="10.0" layoutY="159.0" prefHeight="25.0" prefWidth="198.0" promptText="Id da Zona" />
       <TextField fx:id="numberOfLinesInZone" layoutX="10.0" layoutY="99.0" prefHeight="25.0" prefWidth="401.0" promptText="Número de linhas da Zona" />

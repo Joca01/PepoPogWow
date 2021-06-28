@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static java.lang.String.valueOf;
 
@@ -31,6 +33,7 @@ public class GUI extends Application implements Initializable {
     private final TreeMap<Integer, Integer> zonePlanner = new TreeMap<>();
 
     Factory factory = new Factory();
+    ExecutorService threadPool = Executors.newCachedThreadPool();
 
     @FXML
     TextField zoneOrder;
@@ -99,9 +102,13 @@ public class GUI extends Application implements Initializable {
         zoneId.clear();
     }
 
-    public void simulate() throws IOException {
+    public void simulate() {
         factory.startSimulation();
-        showResults();
+        try {
+            showResults();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void terminalDebugger() throws IOException {
@@ -120,7 +127,7 @@ public class GUI extends Application implements Initializable {
         window.setScene(new Scene(root, 800, 300));
         window.show();
 
-        results1.setText("bah");
+        //results1.setText("bah");
     }
 
     public static void main(String[] args) {
