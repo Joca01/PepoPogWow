@@ -44,7 +44,7 @@ public class Zone {
         }
     }
 
-    public void addToQueue(Vehicle vehicle) throws InterruptedException {
+    public synchronized void addToQueue(Vehicle vehicle) throws InterruptedException {
         try {
             queue.put(vehicle);
         }catch (InterruptedException e){
@@ -57,7 +57,7 @@ public class Zone {
         this.lines = Executors.newFixedThreadPool(amount);
     }
 
-    public Vehicle popFromQueue(){
+    public synchronized Vehicle popFromQueue(){
         Vehicle vehicle = null;
         try {
             vehicle = queue.take();
