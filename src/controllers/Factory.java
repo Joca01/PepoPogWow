@@ -10,7 +10,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Factory {
     private HashMap<String,ArrayList<Vehicle>> vehicles;
-    private Map<Integer,Zone> zones;
+    private HashMap<Integer,Zone> zones;
     private final AtomicBoolean simulationNotOver;
     private final Map<String, Map<String, ArrayList<Item>>> defaultModels;
     private ExecutorService orderPool;
@@ -24,6 +24,9 @@ public class Factory {
         populateDefaultModels();
     }
 
+    public Map<Integer,Zone> getZones(){
+       return zones;
+    }
 
     public void addZone(int ID , int lines) {
         Zone zone = new Zone(ID, lines, this.simulationNotOver);

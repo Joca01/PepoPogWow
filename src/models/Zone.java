@@ -27,6 +27,10 @@ public class Zone {
         populateLines();
     }
 
+    private int getLineNumber(){
+        return this.lineAmount;
+    }
+
     private void populateLines() {
         for(int i = 0 ; i<lineAmount;i++){
             Line line = new Line(this,simulationNotOver);
