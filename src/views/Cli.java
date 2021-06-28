@@ -1,11 +1,11 @@
 package views;
 
 import controllers.Factory;
-import models.Item;
-import models.ItemTimePeriod;
-import models.ItemZoneTime;
+import models.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Cli{
@@ -13,7 +13,7 @@ public class Cli{
         start();
     }
 
-    public void start() throws InterruptedException {
+    public void start() {
         Factory factory = new Factory();
         Scanner scanner = new Scanner(System.in);
         String line;
@@ -45,7 +45,7 @@ public class Cli{
                 System.out.println("Modelo "+modelName+" adicionado.");
                 break;
             case "AZ":
-               //AZ_ZONEID_4
+               //AZ_LineAmount
                 factory.addZone(Integer.parseInt(command[1]),Integer.parseInt(command[2]));
                 System.out.println("Zona" + command[1]+" criada com " +command[2]+" linhas.");
                 break;
@@ -58,14 +58,23 @@ public class Cli{
                 System.out.println("Simulação iniciada...");
                 //Começar simulação
                 factory.startSimulation();
-                try {
-                    Thread.sleep(27*1000);
-                }catch (InterruptedException e){
-                    e.printStackTrace();
-                }
-                factory.endSimulation();
                 System.out.println("Resultados: ");
-                factory.showResults();
+                ArrayList<ItemModelAverage> modelAverage = factory.getModelsAverageBuildingTime();
+                ArrayList<ItemModelAverage> modelWait = factory.getModelsAverageWaitingTime();
+                HashMap<String, HashMap<String,Double>> linePercentage = factory.getLinesPercentageWork();
+                //TODO line %
+                for (int i = 0 ; i<modelAverage.size();i++){
+                    System.out.println(modelAverage.get(i).getFirstField() + " demorou em média " + modelAverage.get(i).getSecondField() + " horas.");
+                }
+                for (int i = 0 ; i<modelWait.size();i++){
+                    System.out.println(modelWait.get(i).getFirstField() + " esperou em média " + modelWait.get(i).getSecondField() + " horas.");
+                }
+                for (Map.Entry<String,HashMap<String,Double>> zone : linePercentage.entrySet()){
+                    for (Map.Entry<String,Double> zoneLine : zone.getValue().entrySet()){
+                        System.out.println(zone.getKey() + " " + zoneLine.getKey() + ": " + zoneLine.getValue()+ "%.");
+                    }
+
+                }
                 break;
             case "":
                 looping = false;

@@ -1,5 +1,7 @@
 package models;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -12,7 +14,8 @@ public class Zone {
     private LinkedBlockingQueue<Vehicle> queue;
     private ExecutorService lines;
     private AtomicBoolean simulationNotOver;
-
+    private HashMap<String,Float> linePercentages;
+    private ArrayList<Line> linesList;
 
     public Zone(int ID, int lines, AtomicBoolean simulationNotOver) {
         this.ID = ID;
@@ -20,11 +23,20 @@ public class Zone {
         this.queue = new LinkedBlockingQueue<Vehicle>();
         this.lines = Executors.newFixedThreadPool(lines);
         this.simulationNotOver = simulationNotOver;
+        this.linesList = new ArrayList<Line>();
+        populateLines();
+    }
+
+    private void populateLines() {
+        for(int i = 0 ; i<lineAmount;i++){
+            Line line = new Line(this,simulationNotOver);
+            linesList.add(line);
+        }
     }
 
     public void startWorkingLines(){
-        for(int i = 0; i<lineAmount; i++){
-            this.lines.submit(new Line(this, this.simulationNotOver));
+        for(Line line : linesList){
+            this.lines.submit(line);
         }
     }
 
@@ -51,6 +63,20 @@ public class Zone {
        return vehicle;
     }
 
+    public HashMap<String,Double> getLinesWorkPercentage(){
+        HashMap<String,Double> returnHash = new HashMap<>();
+        for (int i = 0 ; i < linesList.size();i++){
+            Line line = linesList.get(i);
+            String name = "L"+(i+1);
+            returnHash.put(name,line.getTimeWorkingPercentage());
+        }
+        return  returnHash;
+    }
 
-
+    public String getID() {
+        return "Z"+this.ID;
+    }
 }
+
+
+

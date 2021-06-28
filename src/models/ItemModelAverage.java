@@ -3,9 +3,9 @@ package models;
 public class ItemModelAverage implements Item{
 
     private final String name;
-    private final float value;
+    private final double value;
 
-    public ItemModelAverage(String name, float value){
+    public ItemModelAverage(String name, double value){
         this.name=name;
         this.value = value;
 

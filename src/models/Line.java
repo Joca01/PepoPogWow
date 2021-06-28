@@ -54,6 +54,7 @@ public class Line implements Runnable{
        }
        this.endingTime = System.currentTimeMillis();
        updateTimeAlive();
+        System.out.println("Time Update");
     }
 
     private void updateTimeAlive() {
@@ -75,10 +76,9 @@ public class Line implements Runnable{
     private void takeBreak() {
         this.startBreak = System.currentTimeMillis();
     }
-    public long getTotalBreak() {
-        return totalBreak;
+
+    public double getTimeWorkingPercentage(){
+        return ((timeAlive-totalBreak) * 100)/24000d;
     }
-    public long getTimeAlive() {
-        return timeAlive;
-    }
+
 }

@@ -61,7 +61,6 @@ public class Vehicle {
 
     public boolean isVehicleComplete(){
         //Verifies if the Vehicle passed through all zones
-        //TODO chek if there is a better way to do this check or if this one can bugg out if the car is at the zone but hasn't yet complete its time
         if (pastedThroughZones.size() == zones.size()){
             return true;
         }

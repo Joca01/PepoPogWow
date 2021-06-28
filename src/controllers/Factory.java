@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Factory {
-    private final Map vehicles;
-    private final Map zones;
+    private HashMap<String,ArrayList<Vehicle>> vehicles;
+    private Map<Integer,Zone> zones;
     private final AtomicBoolean simulationNotOver;
     private final Map<String, Map<String, ArrayList<Item>>> defaultModels;
     private ExecutorService orderPool;
@@ -24,34 +24,46 @@ public class Factory {
         populateDefaultModels();
     }
 
-    public void addZone(int ID, int lines) {
+    public void addZone(int ID , int lines) {
         Zone zone = new Zone(ID, lines, this.simulationNotOver);
         zones.put(ID, zone);
     }
 
     public void createVehicle(String modelName){
-        //Creates Vehicle obj based on passed Model , sets its current zone to his first zone on the list
-        //and adds it to the said Zone's Q
         Map<String,ArrayList<Item>> model = defaultModels.get(modelName);
-        ItemTimePeriod orderTime = (ItemTimePeriod) model.get("TimeToOrder").get(0);
+        ItemTimePeriod orderTime = (ItemTimePeriod) model.get("TimetoOrder").get(0);
         ArrayList<Item> zones = model.get("Zones");
 
         Zone firstZone = (Zone) zones.get(0).getFirstField();
 
         Vehicle vehicle = new Vehicle(zones,orderTime);
+
+        if(!vehicles.containsKey(modelName)){
+            ArrayList<Vehicle> array = new ArrayList<>();
+            this.vehicles.put(modelName,array);
+        }
+            vehicles.get(modelName).add(vehicle);
+
+
+        vehicle.setZone(firstZone);
+
         try {
             firstZone.addToQueue(vehicle);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        vehicle.setZone(firstZone);
 
-        if (!vehicles.containsKey(modelName)){ //checking if the model key already has an array of vehicles
-            ArrayList<Vehicle> array = new ArrayList<Vehicle>();
-            vehicles.put(modelName,array);
+    }
+
+
+
+    public HashMap<String,HashMap<String,Double>> getLinesPercentageWork(){
+        HashMap<String,HashMap<String ,Double>> returnHash = new HashMap<>();
+
+        for (Zone zone : zones.values()){
+            returnHash.put(zone.getID(),zone.getLinesWorkPercentage());
         }
-        ArrayList<Vehicle> modelArray = (ArrayList<Vehicle>) vehicles.get(modelName);
-        modelArray.add(vehicle);
+        return returnHash;
 
     }
 
@@ -64,7 +76,7 @@ public class Factory {
                 time += vehicle.getWaitingTime();
                 amount ++;
             }
-            float average = time/amount;
+            double average = time/amount;
             returnArray.add(new ItemModelAverage(model,average));
         }
         return  returnArray;
@@ -97,15 +109,15 @@ public class Factory {
             zone.startWorkingLines();
         }
 
-        orderPool = Executors.newCachedThreadPool();
+        orderPool = Executors.newFixedThreadPool(defaultModels.keySet().size());
         for(String key : this.defaultModels.keySet()){
-            orderPool.submit(new Order(key, this));
+            orderPool.submit(new Order(key, this, simulationNotOver));
         }
 
-        try {
-            TimeUnit.SECONDS.sleep(27);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        try{
+            Thread.sleep(30*1000);
+        }catch (InterruptedException e){
+
         }
 
         endSimulation();
@@ -114,7 +126,15 @@ public class Factory {
 
 
    public void endSimulation(){
-        simulationNotOver.set(false);
+       simulationNotOver.set(false);
+       orderPool.shutdown();
+       try {
+           orderPool.awaitTermination(1,TimeUnit.MILLISECONDS);
+       } catch (InterruptedException e) {
+
+       }
+
+
    }
 
     public void addNewModel(String name, ArrayList<Item> zones,ItemTimePeriod orderTime){
@@ -134,10 +154,6 @@ public class Factory {
     }
 
 
-    private void changeLinesAtZone(int zoneNumber,int lines){
-        Zone zone = (Zone) this.zones.get(zoneNumber);
-        zone.setLines(lines);
-    }
 
     private void populateDefaultModels(){
         //Create Info Maps
@@ -154,7 +170,7 @@ public class Factory {
                     new ItemZoneTime((Zone) zones.get(1),0.60f), new ItemZoneTime((Zone) zones.get(2), 0.85f),
                     new ItemZoneTime((Zone) zones.get(5), 0.50f))));
 
-        infoM3.put("TimetoOrder",new ArrayList<Item>(List.of(new ItemTimePeriod(4,6))));
+        infoM3.put("TimetoOrder",new ArrayList<Item>(List.of(new ItemTimePeriod(2,5))));
         infoM3.put("Zones",new ArrayList<Item>(List.of(new ItemZoneTime((Zone) zones.get(2), 1.20f),
                     new ItemZoneTime((Zone) zones.get(5),0.25f), new ItemZoneTime((Zone) zones.get(1), 0.70f),
                     new ItemZoneTime((Zone) zones.get(4), 0.90f), new ItemZoneTime((Zone) zones.get(3),1.0f))));
@@ -175,5 +191,13 @@ public class Factory {
 
     public Map<String, Map<String, ArrayList<Item>>> getDefaultModels() {
         return this.defaultModels;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Factory{" +
+                "vehicles=" + vehicles +
+                '}';
     }
 }
