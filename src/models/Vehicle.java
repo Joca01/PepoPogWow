@@ -6,6 +6,8 @@ import java.util.List;
 public class Vehicle {
     //Should take information from user input and filter it and populate the atributes
     //ItemZoneTime is (Zone , float) -> where Zone is the zone object and float is the time the model takes on it
+
+    private String modelType;
     private ArrayList<Item> zones;
     private ItemTimePeriod timePeriod;
     private Zone currentZone; //need to know where the current vehicle is at;
@@ -16,7 +18,8 @@ public class Vehicle {
     private long finishPause;
     private long totalPause;
 
-    public Vehicle(ArrayList<Item> zones , ItemTimePeriod timePeriod ){
+    public Vehicle( String modelType, ArrayList<Item> zones , ItemTimePeriod timePeriod ){
+        this.modelType = modelType;
         this.initialized = System.currentTimeMillis();
         this.totalPause =0;
        this.zones = zones;
@@ -98,5 +101,9 @@ public class Vehicle {
 
     public long getWaitingTime() {
         return totalPause;
+    }
+
+    public String getModel() {
+        return this.modelType;
     }
 }

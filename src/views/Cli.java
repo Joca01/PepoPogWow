@@ -24,7 +24,7 @@ public class Cli{
         String[] command = line.split(" ");
         switch (command[0]){
             case "AM":
-                String modelName = "M" + Integer.toString(factory.getModelCount());
+                String modelName = "M" + Integer.toString(factory.getModelCount() +1);
                 int minTime = Integer.parseInt(command[1]);
                 int maxTime = Integer.parseInt(command[2]);
                 ItemTimePeriod orderTime = new ItemTimePeriod(minTime,maxTime);

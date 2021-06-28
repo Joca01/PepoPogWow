@@ -41,7 +41,7 @@ public class Factory {
 
         Zone firstZone = (Zone) zones.get(0).getFirstField();
 
-        Vehicle vehicle = new Vehicle(zones,orderTime);
+        Vehicle vehicle = new Vehicle(modelName, zones,orderTime);
 
         if(!vehicles.containsKey(modelName)){
             ArrayList<Vehicle> array = new ArrayList<>();
@@ -102,10 +102,9 @@ public class Factory {
     }
 
     public void startSimulation() {
-        //need to start the zones
-        //put an order for each model
         Collection<Zone> zones = this.zones.values();
         for (Zone zone : zones) {
+            System.out.println(zone.getLineNumber());
             zone.startWorkingLines();
         }
 
@@ -114,26 +113,28 @@ public class Factory {
             orderPool.submit(new Order(key, this, simulationNotOver));
         }
 
-        try{
-            Thread.sleep(30*1000);
-        }catch (InterruptedException e){
 
+       Thread p = new Thread(new EndSim(this));
+        p.start();
+        try {
+            p.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
-        endSimulation();
 
     }
 
 
    public void endSimulation(){
-       simulationNotOver.set(false);
-       orderPool.shutdown();
+
+       System.out.println("Simulation is ending");
        try {
            orderPool.awaitTermination(1,TimeUnit.MILLISECONDS);
        } catch (InterruptedException e) {
 
        }
-
+       orderPool.shutdown();
+       simulationNotOver.set(false);
 
    }
 
@@ -153,8 +154,47 @@ public class Factory {
         addZone(5,1);
     }
 
+//TODO tentar fazer um populate Models em que sem usar o list OF
+    private void populateDefaultModels(){
+            ArrayList<Item> M1ZT = new ArrayList<>();
+            ArrayList<Item> M2ZT = new ArrayList<>();
+            ArrayList<Item> M3ZT = new ArrayList<>();
 
 
+        //Create Info Maps
+            Map<String, ArrayList<Item>> infoM1 = new HashMap<String, ArrayList<Item>>();
+            Map<String, ArrayList<Item>> infoM2 = new HashMap<String, ArrayList<Item>>();
+            Map<String, ArrayList<Item>> infoM3 = new HashMap<String, ArrayList<Item>>();
+            //Add info to Models
+            infoM1.put("TimetoOrder", new ArrayList<Item>(List.of(new ItemTimePeriod(3, 7))));
+            ItemZoneTime M1Z1 = new ItemZoneTime(zones.get(4),1.10f);
+            ItemZoneTime M1Z2 = new ItemZoneTime(zones.get(1),0.80f);
+            ItemZoneTime M1Z3 = new ItemZoneTime(zones.get(3),0.75f);
+            M1ZT.add(M1Z1); M1ZT.add(M1Z2); M1ZT.add(M1Z3);
+            infoM1.put("Zones",M1ZT);
+
+        infoM2.put("TimetoOrder", new ArrayList<Item>(List.of(new ItemTimePeriod(4, 6))));
+        ItemZoneTime M2Z1 = new ItemZoneTime(zones.get(3),0.50f);
+        ItemZoneTime M2Z2 = new ItemZoneTime(zones.get(1),0.60f);
+        ItemZoneTime M2Z3 = new ItemZoneTime(zones.get(2),0.85f);
+        ItemZoneTime M2Z4 = new ItemZoneTime(zones.get(5),0.50f);
+        M2ZT.add(M2Z1); M2ZT.add(M2Z2); M2ZT.add(M2Z3); M2ZT.add(M2Z4);
+        infoM2.put("Zones",M2ZT);
+
+        infoM3.put("TimetoOrder", new ArrayList<Item>(List.of(new ItemTimePeriod(2, 5))));
+        ItemZoneTime M3Z1 = new ItemZoneTime(zones.get(2),1.20f);
+        ItemZoneTime M3Z2 = new ItemZoneTime(zones.get(5),0.25f);
+        ItemZoneTime M3Z3 = new ItemZoneTime(zones.get(1),0.70f);
+        ItemZoneTime M3Z4 = new ItemZoneTime(zones.get(4),0.90f);
+        ItemZoneTime M3Z5 = new ItemZoneTime(zones.get(3),1.00f);
+        M3ZT.add(M3Z1); M3ZT.add(M3Z2); M3ZT.add(M3Z3); M3ZT.add(M3Z4);M3ZT.add(M3Z5);
+        infoM3.put("Zones",M3ZT);
+
+        defaultModels.put("M1", infoM1);
+        defaultModels.put("M2", infoM2);
+        defaultModels.put("M3", infoM3);
+    }
+/*
     private void populateDefaultModels() {
         //Create Info Maps
         Map<String, ArrayList<Item>> infoM1 = new HashMap<String, ArrayList<Item>>();
@@ -180,7 +220,7 @@ public class Factory {
         defaultModels.put("M2", infoM2);
         defaultModels.put("M3", infoM3);
     }
-
+*/
     public Zone getZone(Integer zoneID) {
         return (Zone) zones.get(zoneID);
     }
@@ -199,5 +239,9 @@ public class Factory {
         return "Factory{" +
                 "vehicles=" + vehicles +
                 '}';
+    }
+
+    public ArrayList<Vehicle> getVehicles(String name) {
+        return this.vehicles.get(name);
     }
 }

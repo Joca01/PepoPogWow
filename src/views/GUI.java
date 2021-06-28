@@ -1,23 +1,23 @@
 package views;
 
 import controllers.Factory;
-import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-import models.Item;
-import models.ItemTimePeriod;
-import models.ItemZoneTime;
-import models.Zone;
+//import javafx.application.Application;
+//import javafx.event.ActionEvent;
+//import javafx.fxml.FXML;
+//import javafx.fxml.FXMLLoader;
+//import javafx.fxml.Initializable;
+//import javafx.scene.Parent;
+//import javafx.scene.Scene;
+//import javafx.scene.control.TextArea;
+//import javafx.scene.control.TextField;
+//import javafx.scene.image.Image;
+//import javafx.stage.Stage;
+//import models.Item;
+//import models.ItemTimePeriod;
+//import models.ItemZoneTime;
+//import models.Zone;
 
-import java.io.IOException;
+/*import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
@@ -134,3 +134,4 @@ public class GUI extends Application implements Initializable {
         launch(args);
     }
 }
+*/

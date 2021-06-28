@@ -1,5 +1,6 @@
 package models;
 
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Line implements Runnable{
@@ -26,20 +27,23 @@ public class Line implements Runnable{
        while (simulationNotOver.get()){
            if(!zone.queueEmpty()){
                this.model = zone.popFromQueue();
-
                model.stopPause();
                model.updateTotalPause();
 
                Float timeOnZone = model.getZoneAndTimeAt(zone);
                try {
                    stopBreak();
+                   System.out.println("BreakStoped Line da zona" + zone.getID());
                    updateTotalBreak();
-                   Thread.sleep(erlang.getValue(timeOnZone));
+                   TimeUnit.MILLISECONDS.sleep(Math.round(model.getZoneAndTimeAt(this.zone)));
+                   //Thread.sleep(erlang.getValue(timeOnZone));
                } catch (InterruptedException e) {
                    e.printStackTrace();
                }
+               System.out.println("Dei Stamp na zona " + zone.getID() + "no modelo " + model.getModel());
                model.stampZone();
                if (model.isVehicleComplete()){
+                   System.out.println("Veiculo do modelo " + model.getModel() + " terminado na zona " + this.zone.getID());
                    model.isFinished();
                }else{
                    model.takePause();
@@ -49,7 +53,6 @@ public class Line implements Runnable{
                }
                takeBreak();
            }
-           System.out.println("trabalhando");
        }
        this.endingTime = System.currentTimeMillis();
        updateTimeAlive();

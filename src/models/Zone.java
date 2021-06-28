@@ -3,10 +3,8 @@ package models;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Queue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Zone {
@@ -23,7 +21,7 @@ public class Zone {
         this.ID = ID;
         this.lineAmount = lines;
         this.queue = new LinkedList<>();
-        this.lines = Executors.newFixedThreadPool(lines);
+        this.lines = Executors.newCachedThreadPool();
         this.simulationNotOver = simulationNotOver;
         this.linesList = new ArrayList<Line>();
         populateLines();
@@ -42,11 +40,14 @@ public class Zone {
 
     public void startWorkingLines(){
         for(Line line : linesList){
+            System.out.println(this.ID +" "+"Starting a line" );
             this.lines.submit(line);
         }
     }
 
-public synchronized void addToQueue(Vehicle vehicle) { queue.add(vehicle);
+public synchronized void addToQueue(Vehicle vehicle) {
+        queue.add(vehicle);
+    System.out.println("Veiculo adicionado a Zona: "+ this.ID + " temos " + queue.size() + " Veiculos." );
     }
 
     public void setLines(int amount){
@@ -55,11 +56,10 @@ public synchronized void addToQueue(Vehicle vehicle) { queue.add(vehicle);
     }
 
     public synchronized Vehicle popFromQueue(){
-        Vehicle vehicle = null;
-
-        vehicle = queue.remove();
-
-       return vehicle;
+            Vehicle vehicle = queue.get(0);
+            queue.removeFirst();
+            System.out.println("Veiculo retirado da Zona: "+ this.ID + " temos " + queue.size() + " Veiculos." );
+            return vehicle;
     }
 
     public HashMap<String,Double> getLinesWorkPercentage(){

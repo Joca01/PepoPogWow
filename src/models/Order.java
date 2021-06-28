@@ -27,7 +27,6 @@ public class Order implements Runnable{
             double min = timeTranslator(minOrder);
             double max = timeTranslator(maxOrder);
             double orderTime = ThreadLocalRandom.current().nextDouble(min,max);
-            //System.out.println(orderTime * 1000);
             try {
                 TimeUnit.MILLISECONDS.sleep(Math.round(orderTime * 1000));
             } catch (InterruptedException e) {
@@ -35,6 +34,7 @@ public class Order implements Runnable{
             }
 
             factory.createVehicle(modelName);
+            System.out.println( "Temos " + factory.getVehicles(modelName).size() + " Veiculos " +modelName);
         }
     }
 
